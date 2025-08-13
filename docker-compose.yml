@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  # Web server
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"  # Port mapping to host
+    volumes:
+      - ./src:/var/www:cached  # :cached - optimization for Linux
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - nginx-logs:/var/log/nginx  # Dedicated volume for logs
+    depends_on:
+      - php
+    networks:
+      - symfony-net
+
+  # PHP handler
+  php:
+    build:
+      context: ./docker/php  # Using our Dockerfile
+    volumes:
+      - ./src:/var/www:cached
+      - phpcomposercache:/composer/cache  # Composer cache between runs
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=symfony
+      - DB_PASSWORD=password
+      - DB_NAME=symfony_db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # Important for Xdebug!
+    networks:
+      - symfony-net
+    depends_on:
+      - mysql
+
+  # Database
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password  # Always use strong passwords!
+      MYSQL_DATABASE: symfony_db
+      MYSQL_USER: symfony
+      MYSQL_PASSWORD: password
+    volumes:
+      - mysql-data:/var/lib/mysql  # Database data persistence
+    networks:
+      - symfony-net
+
+  # PHPMyAdmin (for visual database management)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql  # Connection to mysql container
+      PMA_USER: symfony
+      PMA_PASSWORD: password
+    depends_on:
+      - mysql
+    networks:
+      - symfony-net
+
+  # MailHog for email testing (optional)
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "8025:8025"  # Web interface
+      - "1025:1025"  # SMTP port
+    networks:
+      - symfony-net
+
+# Volume management
+volumes:
+  mysql-data:    # For MySQL data
+  phpcomposercache:  # For Composer cache
+  nginx-logs:    # For Nginx logs
+
+# Network for container communication
+networks:
+  symfony-net:
+    driver: bridge
