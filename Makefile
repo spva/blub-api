@@ -1,28 +1,28 @@
 # Main commands
 up:
-	docker-compose up -d
+	docker compose up -d
 
 down:
-	docker-compose down
+	docker compose down
 
 restart: down up
 
 # PHP operations
 bash:
-	docker-compose exec php bash
+	docker compose exec php bash
 
 composer:
-	docker-compose exec php composer $(filter-out $@,$(MAKECMDGOALS))
+	docker compose exec php composer $(filter-out $@,$(MAKECMDGOALS))
 
 console:
-	docker-compose exec php bin/console $(filter-out $@,$(MAKECMDGOALS))
+	docker compose exec php bin/console $(filter-out $@,$(MAKECMDGOALS))
 
 # Administration
 logs:
-	docker-compose logs -f
+	docker compose logs -f
 
 mysql:
-	docker-compose exec mysql mysql -usymfony -ppassword symfony_db
+	docker compose exec mysql mysql -usymfony -ppassword symfony_db
 
 phpmyadmin:
 	xdg-open http://localhost:8080  # Linux
@@ -32,10 +32,10 @@ mailhog:
 
 # Quality tools
 cs-fix:
-	docker-compose exec php php-cs-fixer fix src
+	docker compose exec php php-cs-fixer fix src
 
 phpstan:
-	docker-compose exec php phpstan analyse src
+	docker compose exec php phpstan analyse src
 
 # Help for beginners
 help:
