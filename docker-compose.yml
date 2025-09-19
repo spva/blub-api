@@ -34,6 +34,25 @@ services:
     depends_on:
       - mysql
 
+  mysql:
+    image: mysql:8.0  # Use official MySQL 8.0 image
+    container_name: symfony-mysql  # Container name for convenience
+    restart: always  # Always restart container on failures
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword  # Root user password
+      MYSQL_DATABASE: symfony_db  # Database name that will be created automatically
+      MYSQL_USER: symfony_user  # Username (optional but recommended)
+      MYSQL_PASSWORD: userpassword  # User password (optional)
+      TZ: Europe/Berlin  # Timezone (configure as needed)
+    ports:
+      - "3306:3306"  # Port mapping: host:container
+    volumes:
+      - mysql_data:/var/lib/mysql  # Volume for database storage
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql  # Initialization SQL script
+    networks:
+      - symfony-net  # Connect to network (if used)
+
+
   # Database
   mysql:
     image: mysql:8.0
@@ -72,9 +91,27 @@ services:
 
 # Volume management
 volumes:
-  mysql-data:    # For MySQL data
-  phpcomposercache:  # For Composer cache
-  nginx-logs:    # For Nginx logs
+  mysql-data:
+    name: ${PROJECT_NAME:-symfony-docker}_mysql-data  # Volume name with project prefix
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./docker/data/mysql  # Host path for MySQL data
+  phpcomposercache:
+    name: ${PROJECT_NAME:-symfony-docker}_phpcomposercache
+    driver: local
+    driver_opts:
+      type: tmpfs  # For Composer cache, tmpfs can be used for speed
+      device: tmpfs
+      o: size=100m  # Size limitation
+  nginx-logs:
+    name: ${PROJECT_NAME:-symfony-docker}_nginx-logs
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./docker/logs/nginx  # Host path for Nginx logs
 
 # Network for container communication
 networks:
