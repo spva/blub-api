@@ -1,7 +1,5 @@
 #!/bin/bash
 
-USER_GROUP = "$(id -u):$(id -g)"
-
 # Check Docker installation
 if ! command -v docker &> /dev/null; then
     echo "Error: Docker is not installed!"
@@ -17,12 +15,12 @@ docker compose up -d --build
 # Install Symfony (disable because already installed)
 # docker compose exec php composer create-project symfony/skeleton:"6.4.*" .
 
-# Fix permissions (добавлено исправление прав)
+# Fix permissions (added permission fix)
 docker compose exec php sh -c "chown -R $(id -u):$(id -g) ."
 
 # Environment setup
-echo "APP_ENV=dev" > src/.env
-echo "DATABASE_URL=mysql://symfony:password@mysql:3306/symfony_db?serverVersion=8.0" >> src/.env
+cp ./src/.env.dev.dist ./src/.env.dev
+cp ./src/.env.dist ./src/.env
 
 # Install dependencies
 docker compose exec php composer require \
@@ -31,12 +29,12 @@ docker compose exec php composer require \
     --no-interaction
 
 # Create database
-docker compose exec php bin/console doctrine:database:create
+docker compose exec php php bin/console doctrine:database:create
 
 # Write permissions (important for Symfony cache)
 docker compose exec php chmod -R 777 var/
 
-# Fix permissions again after operations (дополнительное исправление)
+# Fix permissions again after operations (additional fix)
 docker compose exec php sh -c "chown -R $(id -u):$(id -g) ."
 
 echo "---------------------------------------------"
