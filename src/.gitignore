@@ -26,4 +26,5 @@
 ###< composer ###
 
 # Docker
-/docker/
+/docker/data/mysql/*
+/docker/logs/nginx/*
