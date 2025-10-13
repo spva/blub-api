@@ -35,20 +35,20 @@ services:
       - mysql
 
   mysql:
-    image: mysql:8.0  # Use official MySQL 8.0 image
-    container_name: symfony-mysql  # Container name for convenience
-    restart: always  # Always restart container on failures
+    image: mysql:8.0 # Use official MySQL 8.0 image
+    container_name: symfony-mysql # Container name for convenience
+    restart: always # Always restart container on failures
     environment:
-      MYSQL_ROOT_PASSWORD: root # Root user password
-      MYSQL_DATABASE: symfony_db  # Database name that will be created automatically
-      MYSQL_USER: symfony  # Username (optional but recommended)
-      MYSQL_PASSWORD: password  # User password (optional)
-      TZ: Europe/Berlin  # Timezone (configure as needed)
+      MYSQL_ROOT_PASSWORD: test # Root user password
+      MYSQL_DATABASE: symfony_db # Database name that will be created automatically
+      MYSQL_USER: symfony # Username (optional but recommended)
+      MYSQL_PASSWORD: password # User password (optional)
+      TZ: Europe/Berlin # Timezone (configure as needed)
     ports:
-      - "3306:3306"  # Port mapping: host:container
+      - "3306:3306" # Port mapping: host:container
     volumes:
-      - mysql-data:/var/lib/mysql  # Volume for database storage
-      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql  # Initialization SQL script
+      - mysql-data:/var/lib/mysql # Volume for database storage
+      # - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql # Initialization SQL script
     networks:
       - symfony-net  # Connect to network (if used)
 
@@ -59,8 +59,8 @@ services:
       - "8080:80"
     environment:
       PMA_HOST: mysql  # Connection to mysql container
-      PMA_USER: symfony
-      PMA_PASSWORD: password
+      PMA_USER: root
+      PMA_PASSWORD: test
     depends_on:
       - mysql
     networks:
