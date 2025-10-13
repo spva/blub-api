@@ -39,10 +39,10 @@ services:
     container_name: symfony-mysql  # Container name for convenience
     restart: always  # Always restart container on failures
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword  # Root user password
+      MYSQL_ROOT_PASSWORD: root # Root user password
       MYSQL_DATABASE: symfony_db  # Database name that will be created automatically
-      MYSQL_USER: symfony_user  # Username (optional but recommended)
-      MYSQL_PASSWORD: userpassword  # User password (optional)
+      MYSQL_USER: symfony  # Username (optional but recommended)
+      MYSQL_PASSWORD: password  # User password (optional)
       TZ: Europe/Berlin  # Timezone (configure as needed)
     ports:
       - "3306:3306"  # Port mapping: host:container
