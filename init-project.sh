@@ -14,8 +14,8 @@ mkdir -p {docker/nginx,docker/php,src}
 # Start containers
 docker compose up -d --build
 
-# Install Symfony
-docker compose exec php composer create-project symfony/skeleton:"6.4.*" .
+# Install Symfony (disable because already installed)
+# docker compose exec php composer create-project symfony/skeleton:"6.4.*" .
 
 # Fix permissions (добавлено исправление прав)
 docker compose exec php sh -c "chown -R $(id -u):$(id -g) ."
