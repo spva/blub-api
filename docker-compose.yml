@@ -47,7 +47,7 @@ services:
     ports:
       - "3306:3306"  # Port mapping: host:container
     volumes:
-      - mysql_data:/var/lib/mysql  # Volume for database storage
+      - mysql-data:/var/lib/mysql  # Volume for database storage
       - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql  # Initialization SQL script
     networks:
       - symfony-net  # Connect to network (if used)
